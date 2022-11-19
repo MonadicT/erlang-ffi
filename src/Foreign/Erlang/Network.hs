@@ -62,11 +62,16 @@ flagDistMonitorName    =  0x20
 flagHiddenAtomCache    =  0x40
 flagNewFunTags         =  0x80
 flagExtendedPidsPorts  = 0x100
+flagExportPtrTag       = 0x200
+flagNewFloats          = 0x800
+flagBitBinaries        = 0x400
 flagUTF8Atoms          = 0x10000
+flagMapTag             = 0x20000
+flagBigCreation        = 0x40000
+flagHandshake23        = 0x1000000
+flagUnlinkId           = 0x2000000
+flagV4NC               = 0x400000000 :: Word64
 
-flagExtendedReferences :: Word32
-flagExtendedPidsPorts  :: Word32
-flagUTF8Atoms          :: Word32
 
 getUserCookie :: IO String
 getUserCookie = do
@@ -184,9 +189,12 @@ handshake out inf self = do
 
   where
     sendName = out $
-        tag 'n' <>
-        putn erlangVersion <>
-        putN (flagExtendedReferences .|. flagExtendedPidsPorts .|. flagUTF8Atoms .|. flagNewFunTags) <>
+      tag 'N' <>
+        putULL (flagExtendedReferences .|. flagExtendedPidsPorts .|. flagUTF8Atoms .|. flagNewFunTags .|.
+                flagHandshake23 .|. flagBigCreation .|. flagMapTag .|. flagNewFloats .|. flagBitBinaries
+               .|. flagExportPtrTag .|. flagFunTags .|. flagV4NC .|. flagUnlinkId) <>
+        putN 0 <>
+        putn (length self) <>
         putA self
 
     recvStatus = do
@@ -196,12 +204,15 @@ handshake out inf self = do
     recvChallenge = do
         msg <- inf
         return . flip runGet msg $ do
-            _tag <- getC
-            _version <- getn 
-            _flags <- getN
+            _version <- getC
+            _flags <- getULL
             challenge <- getWord32be
+            creation <- getWord32be
+            nlen <- getn
+            peer_name <- getA nlen
             return challenge
 
+      --       self._send_challenge_reply(challenge)
     challengeReply reply challenge = out $
         tag 'r' <>
         word32BE challenge <>

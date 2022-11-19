@@ -24,17 +24,18 @@ module Foreign.Erlang.Types
   , getC
   , getErl
   , getN
+  , getULL
   , geta
   , getn
   , putA
   , putC
   , putErl
   , putN
+  , putULL
   , puta
   , putn
   , tag
   ) where
-
 import           Control.Exception            (assert)
 import           Control.Monad                (forM, liftM)
 import           Prelude                      hiding (id)
@@ -44,7 +45,7 @@ import           Data.Binary
 import           Data.Binary.Get
 import qualified Data.ByteString.Char8        as BB
 import qualified Data.ByteString.Lazy         as B
-import           Data.ByteString.Lazy.Builder
+import           Data.ByteString.Builder
 import qualified Data.ByteString.Lazy.Char8   as C
 import           Data.Char                    (chr, isPrint, ord)
 --import Data.Int (Int64)
@@ -302,6 +303,9 @@ putn = word16BE . fromIntegral
 putN :: Integral a => a -> Builder
 putN = word32BE . fromIntegral
 
+putULL :: Integral a => a -> Builder
+putULL = word64BE . fromIntegral
+
 puta :: [Word8] -> Builder
 puta = lazyByteString . B.pack
 
@@ -316,6 +320,9 @@ getn = liftM fromIntegral getWord16be
 
 getN :: Get Int
 getN = liftM fromIntegral getWord32be
+
+getULL :: Get Int
+getULL = liftM fromIntegral getWord64be
 
 geta :: Int -> Get [Word8]
 geta = liftM B.unpack . getLazyByteString . fromIntegral
