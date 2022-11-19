@@ -2,9 +2,10 @@
 
 # erlang-ffi
 
-Should work with with OTP version < 23 (have tried only with OTP 22 and 23).
+~~Should work with with OTP version < 23 (have tried only with OTP 22 and 23).~~
+Works only with OTP version 26.
 
-Speaks the Erlang network protocol and impersonates an Erlang node on the network. Fully capable of bi-directional communication with Erlang. Erlang types are, as far as reasonable, mapped to Haskell types. Messages to Erlang are just function calls in Haskell, and messages from Erlang are delivered to MVars. 
+Speaks the Erlang network protocol and impersonates an Erlang node on the network. Fully capable of bi-directional communication with Erlang. Erlang types are, as far as reasonable, mapped to Haskell types. Messages to Erlang are just function calls in Haskell, and messages from Erlang are delivered to MVars.
 
 ## Short example
 
@@ -65,7 +66,7 @@ true
 Erlang node is started, and the process is registered as well. Now start the Haskell program:
 
 ~~~~
-./Hello 
+./Hello
 Received: Hello, Haskell!
 ~~~~
 
