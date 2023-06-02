@@ -40,7 +40,7 @@ import System.FilePath          ((</>))
 import System.IO
 import System.Random            (randomIO)
 import qualified Data.ByteString.Lazy.Char8 as B
-import Data.ByteString.Lazy.Builder
+import Data.ByteString.Builder
 import Data.Monoid ((<>),mempty)
 import Network.Socket
 
